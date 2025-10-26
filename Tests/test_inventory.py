@@ -1,9 +1,10 @@
 import time
 
-from Config.config import USERNAME, PASSWORD, EXCEL_PATH
+from Config.config import USERNAME, PASSWORD
 from Pages.LoginPage import LoginPage
 import pytest
 from utils.excel_reading import read_excel
+import os
 
 
 @pytest.mark.usefixtures("setup")
@@ -36,6 +37,8 @@ class TestInventory:
         loginpage = LoginPage(self.driver)
         homepage = loginpage.login(USERNAME,PASSWORD)
         homepage.verify_presence_of_app_logo()
-        products = read_excel(EXCEL_PATH)
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        excel_path = os.path.join(project_root, "TestData", "Book1.xlsx")
+        products = read_excel(excel_path)
         homepage.add_multiple_products(products)
         assert homepage.prod_count_in_cart() == str(len(products))

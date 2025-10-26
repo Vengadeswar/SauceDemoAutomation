@@ -47,6 +47,7 @@ class HomePage(BasePage):
 
     def click_burger_menu(self):
         self.click(self.burger_menu)
+        self.dismiss_alert()
 
     def click_logout(self):
         self.click(self.logout_button)
