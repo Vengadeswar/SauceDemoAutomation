@@ -2,52 +2,48 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = 'python' // Adjust if needed
+        PYTHON = "C:\\Python312\\python.exe"
+        PIP = "C:\\Python312\\Scripts\\pip.exe"
+        ALLURE = "C:\\allure\\bin\\allure.bat"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Vengadeswar/SauceDemoAutomation.git', credentialsId: 'github'
+                git credentialsId: 'github', url: 'https://github.com/Vengadeswar/SauceDemoAutomation.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'pip install -r requirements.txt'
+                bat "${PIP} install -r requirements.txt"
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run pytest with rerun for failed tests (2 retries, 5s delay)
-                bat 'pytest -v -s --reruns 2 --reruns-delay 5 --alluredir=Reports/allure-results'
+                bat "${PYTHON} -m pytest -v -s --alluredir=Reports/allure-results"
             }
         }
 
         stage('Generate Allure Report') {
             steps {
-                bat 'allure generate Reports/allure-results -o Reports/allure-report --clean'
+                bat "${ALLURE} generate Reports/allure-results -o Reports/allure-report --clean"
             }
         }
 
-        stage('Open Allure Report') {
+        stage('Archive Allure Report') {
             steps {
-                bat 'allure open Reports/allure-report'
+                archiveArtifacts artifacts: 'Reports/allure-report/**', allowEmptyArchive: true
             }
         }
+
     }
 
     post {
         always {
-            echo 'Cleaning workspace...'
             cleanWs()
-        }
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
