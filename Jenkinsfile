@@ -11,7 +11,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git credentialsId: 'github', url: 'https://github.com/Vengadeswar/SauceDemoAutomation.git'
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Vengadeswar/SauceDemoAutomation.git'
             }
         }
 
@@ -29,7 +29,13 @@ pipeline {
 
         stage('Generate Allure Report') {
             steps {
-                bat "${ALLURE} generate Reports/allure-results -o Reports/allure-report --clean"
+                script {
+                    if (fileExists("${ALLURE}")) {
+                        bat "${ALLURE} generate Reports/allure-results -o Reports/allure-report --clean"
+                    } else {
+                        echo "Allure not found, skipping report generation"
+                    }
+                }
             }
         }
 
