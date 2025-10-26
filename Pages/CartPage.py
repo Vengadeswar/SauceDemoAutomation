@@ -14,6 +14,7 @@ class CartPage(BasePage):
 
     def proceed_checkout(self):
         self.click(self.checkout)
+        self.dismiss_alert()
         infopage = InfoPage(self.driver)
         return infopage
 
