@@ -1,6 +1,7 @@
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoAlertPresentException
 
 class BasePage:
 
@@ -39,3 +40,9 @@ class BasePage:
         drp_down = Select(self.find_element(locator))
         drp_down.select_by_visible_text(option)
 
+    def dismiss_alert(self):
+        try:
+            alert = self.driver.switch_to.alert
+            alert.accept()
+        except NoAlertPresentException:
+            pass

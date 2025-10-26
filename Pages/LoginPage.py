@@ -30,6 +30,7 @@ class LoginPage(BasePage):
         self.type_username(username)
         self.type_password(password)
         self.click_login_button()
+        self.dismiss_alert()
         homepage = HomePage(self.driver)
         return homepage
 
