@@ -11,36 +11,56 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Vengadeswar/SauceDemoAutomation.git'
+                echo "Checking out code from GitHub..."
+                git credentialsId: 'github', url: 'https://github.com/Vengadeswar/SauceDemoAutomation.git', branch: 'main'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat "${PIP} install -r requirements.txt"
+                echo "Installing Python dependencies..."
+                bat """
+                if exist "${PIP}" (
+                    ${PIP} install --upgrade pip
+                    ${PIP} install -r requirements.txt
+                ) else (
+                    echo Pip not found at ${PIP}
+                    exit 1
+                )
+                """
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat "${PYTHON} -m pytest -v -s --alluredir=Reports/allure-results"
+                echo "Running Pytest automation..."
+                bat """
+                if exist "${PYTHON}" (
+                    ${PYTHON} -m pytest -v -s --alluredir=Reports/allure-results
+                ) else (
+                    echo Python not found at ${PYTHON}
+                    exit 1
+                )
+                """
             }
         }
 
         stage('Generate Allure Report') {
             steps {
-                script {
-                    if (fileExists("${ALLURE}")) {
-                        bat "${ALLURE} generate Reports/allure-results -o Reports/allure-report --clean"
-                    } else {
-                        echo "Allure not found, skipping report generation"
-                    }
-                }
+                echo "Generating Allure Report..."
+                bat """
+                if exist "${ALLURE}" (
+                    ${ALLURE} generate Reports/allure-results -o Reports/allure-report --clean
+                ) else (
+                    echo Allure not found at ${ALLURE}, skipping report generation
+                )
+                """
             }
         }
 
         stage('Archive Allure Report') {
             steps {
+                echo "Archiving Allure Report..."
                 archiveArtifacts artifacts: 'Reports/allure-report/**', allowEmptyArchive: true
             }
         }
@@ -49,6 +69,7 @@ pipeline {
 
     post {
         always {
+            echo "Cleaning workspace..."
             cleanWs()
         }
     }
