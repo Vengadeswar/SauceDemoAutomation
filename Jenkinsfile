@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = "C:\\Python312\\python.exe"
-        PIP = "C:\\Python312\\Scripts\\pip.exe"
+        PYTHON = "C:\\Program Files\\Python312\\python.exe"
+        PIP = "C:\\Program Files\\Python312\\Scripts\\pip.exe"
         ALLURE = "C:\\allure\\bin\\allure.bat"
     }
 
@@ -21,8 +21,8 @@ pipeline {
                 echo "Installing Python dependencies..."
                 bat """
                 if exist "${PIP}" (
-                    ${PIP} install --upgrade pip
-                    ${PIP} install -r requirements.txt
+                    "${PIP}" install --upgrade pip
+                    "${PIP}" install -r requirements.txt
                 ) else (
                     echo Pip not found at ${PIP}
                     exit 1
@@ -36,7 +36,7 @@ pipeline {
                 echo "Running Pytest automation..."
                 bat """
                 if exist "${PYTHON}" (
-                    ${PYTHON} -m pytest -v -s --alluredir=Reports/allure-results
+                    "${PYTHON}" -m pytest -v -s --alluredir=Reports/allure-results
                 ) else (
                     echo Python not found at ${PYTHON}
                     exit 1
@@ -50,7 +50,7 @@ pipeline {
                 echo "Generating Allure Report..."
                 bat """
                 if exist "${ALLURE}" (
-                    ${ALLURE} generate Reports/allure-results -o Reports/allure-report --clean
+                    "${ALLURE}" generate Reports/allure-results -o Reports/allure-report --clean
                 ) else (
                     echo Allure not found at ${ALLURE}, skipping report generation
                 )
