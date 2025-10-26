@@ -14,7 +14,7 @@ class TestProductPage:
         assert prod_page.verify_presence_of_prod_price()
         assert prod_page.verify_presence_of_image()
 
-    def test_adding_product_to_cart(self):
+    def test_adding_product_to_cart_in_inventory(self):
         loginpage = LoginPage(self.driver)
         homepage = loginpage.login(USERNAME1,PASSWORD)
         homepage.verify_presence_of_app_logo()

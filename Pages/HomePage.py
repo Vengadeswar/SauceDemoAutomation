@@ -36,6 +36,7 @@ class HomePage(BasePage):
         return price_lst
 
     def click_on_a_product(self,name):
+        self.dismiss_alert()
         names = self.find_elements(self.prod_name)
         for i in names:
             if i.text == name:
